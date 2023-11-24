@@ -1,7 +1,7 @@
 <?php
 
-use App\Controller\Resource\ReadImageController;
-use App\Controller\Resource\ShowGreetingController;
+use App\Controller\Util\ReadImageController;
+use App\Controller\Util\ShowGreetingController;
 use Slimmvc\Routing\Router;
 
 return function (Router $router) {
@@ -16,12 +16,12 @@ return function (Router $router) {
 
     // CartItem routes
     $router->addRoute("GET", "/dev/cart",
-        [\App\Controller\Medshop\CartItemsController::class, "getUserCartFromATime"],
+        [\App\Controller\Example\CartItemsController::class, "getUserCartFromATime"],
         true
     );
 
 
     // Login route
     $router->addRoute("POST", "/dev/login",
-        [\App\Controller\Medshop\LoginController::class, "login"]);
+        [\App\Controller\Example\LoginController::class, "login"]);
 };

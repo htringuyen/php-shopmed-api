@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Medshop;
+namespace App\Controller\Example;
 
 use App\Model\CartItem;
 use Slimmvc\Http\HttpRequest;

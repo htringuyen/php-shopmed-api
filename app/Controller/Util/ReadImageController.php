@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Resource;
+namespace App\Controller\Util;
 
 use Slimmvc\Filesystem\LocalFilesystemDriver;
 use Slimmvc\Http\HttpRequest;
