@@ -1,5 +1,5 @@
-create database if not exists medshop;
-use medshop;
+create database if not exists shopmed;
+use shopmed;
 
 CREATE TABLE User (
                       id INT PRIMARY KEY AUTO_INCREMENT,

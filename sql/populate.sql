@@ -1,3 +1,5 @@
+use shopmed;
+
 -- Insert data into User table
 INSERT INTO User (id, fullName, email, address, phone) VALUES
                                                            (1000001, 'Dr. John Smith', 'john.smith@example.com', '123 Medical St', '555-1234'),
