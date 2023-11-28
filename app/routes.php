@@ -1,7 +1,6 @@
 <?php
 
 use App\Controller\Util\ReadImageController;
-use App\Controller\Util\ShowGreetingController;
 use Slimmvc\Routing\Router;
 
 return function (Router $router) {
@@ -13,7 +12,9 @@ return function (Router $router) {
 
 
     // host images
-    $router->addRoute("GET", "/res/images/{category}/{imageId}", [ReadImageController::class, "handle"]);
+    $router->addRoute("GET", "/res/images/{category}/{imageId}",
+        [ReadImageController::class, "handle"]
+    );
 
 
     // get cart items of logged-in user with time filtering from a time

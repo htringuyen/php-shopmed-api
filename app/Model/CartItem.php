@@ -22,5 +22,4 @@ class CartItem extends Model {
             "maxRefDepth" => 0
         ]
     ];
-
 }

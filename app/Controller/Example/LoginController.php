@@ -9,7 +9,9 @@ use Slimmvc\Http\TokenAuthentication;
 
 class LoginController {
 
-    public function login(HttpRequest $request, HttpResponse $response, TokenAuthentication $authentication) {
+    public function login(HttpRequest $request, HttpResponse $response,
+                          TokenAuthentication $authentication) {
+
         $authHeaderValue = $request->getBasicAuthorizationHeaderValue();
 
         $credentials = explode(":", base64_decode($authHeaderValue));

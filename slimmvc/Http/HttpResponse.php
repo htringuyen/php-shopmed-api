@@ -19,6 +19,7 @@ class HttpResponse {
     const HEADER_LOCATION = "Location";
 
     private string $type = HttpResponse::HTML;
+
     private mixed $content = '';
     private int $status = 200;
     private array $headers = [];
