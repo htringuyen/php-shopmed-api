@@ -21,6 +21,8 @@ class CartItemsController {
         // perform querying with Model's static methods
         $cartItems = CartItem::where("userId", $userId)->where("createdAt", $fromDateTime, ">")->all();
 
+        /*********** This is just for demonstration purpose ***********/
+        /*
         $cartItem = $cartItems[0]; // get the first cart item
 
         $id = $cartItem->id; // get the id of cart item
@@ -35,6 +37,8 @@ class CartItemsController {
         $userIdFromCartItem = $cartItem->userId; // get the userId associated with cart item
         $user = $cartItem->user; // get the user Object associated with cart item
         $fullName = $user->fullName; // get the username of the user Object of the first item
+        */
+        /*********** This is just for demonstration purpose ***********/
 
 
         // convert list of CartItem to plain array for transferring to user
