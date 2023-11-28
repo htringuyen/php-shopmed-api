@@ -1,3 +1,6 @@
+# Slimmvc docs
+Read the documentation for custom frameword via: https://docs.google.com/document/d/1m_5TR5PAt9_EF-MQhtRRYaiR1doNU1Sz9QfnTEeec00/edit?usp=sharing
+
 # run the app
 
 ## Setup database
