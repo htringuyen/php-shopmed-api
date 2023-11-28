@@ -28,8 +28,9 @@ class Router {
     }
 
     public function addRoute(string $method, string $path, callable|array $handler,
+                             array $requiredParams = [],
                              bool $protected = false, mixed $authority = null): Route {
-        $route = $this->routes[] = new Route($method, $path, $handler, $protected, $authority);
+        $route = $this->routes[] = new Route($method, $path, $handler, $requiredParams, $protected, $authority);
         return $route;
     }
 

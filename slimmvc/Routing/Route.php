@@ -9,15 +9,19 @@ class Route {
     private string $path;
     private $handler;
     private array $pathParams = [];
+    private array $queryParams = [];
+    private array $requiredQueryParams = [];
     private ?string $name;
     private bool $protected;
     private mixed $authority;
 
     public function __construct(string $method, string $path, callable|array $handler,
-                                bool $protected = false, mixed $authority = null, $name = null) {
+                                array $requiredParams = [], bool $protected = false,
+                                mixed $authority = null, $name = null) {
         $this->method = $method;
         $this->path = $path;
         $this->handler = $handler;
+        $this->requiredQueryParams = $requiredParams;
         $this->name = $name;
         $this->protected = $protected;
         $this->authority = $authority;
@@ -36,6 +40,10 @@ class Route {
     }
 
     public function getPathParams(): array {
+        return $this->pathParams;
+    }
+
+    public function getQueryParams(): array {
         return $this->pathParams;
     }
 
@@ -71,11 +79,17 @@ class Route {
             return false;
         }
 
-//        $urlQuery = parse_url($url, PHP_URL_QUERY);
-//
-//        if (isset($urlQuery)) {
-//            $this->requestParams = $this->extractQueryParams($urlQuery);
-//        }
+        $urlQuery = parse_url($url, PHP_URL_QUERY);
+
+        if (isset($urlQuery)) {
+            $this->queryParams = $this->extractQueryParams($urlQuery);
+        }
+
+        foreach ($this->requiredQueryParams as $requiredParam) {
+            if (! isset($this->queryParams[$requiredParam])) {
+                return false;
+            }
+        }
 
         return true;
     }
@@ -147,19 +161,19 @@ class Route {
         return false;
     }
 
-//    private function extractQueryParams(string $urlQuery): array {
-//        $pattern = "/[&?]([^&?/]+)=([^&]*)/";
-//
-//        preg_match_all($pattern, $urlQuery, $matches, PREG_SET_ORDER);
-//
-//        $queryParams = [];
-//
-//        foreach ($matches as $param) {
-//            $queryParams[$param[0]] = $param[1];
-//        }
-//
-//        return $queryParams;
-//    }
+    private function extractQueryParams(string $urlQuery): array {
+        $pattern = "#[&?]?([^&?/]+)=([^&]*)#";
+
+        preg_match_all($pattern, $urlQuery, $matches, PREG_SET_ORDER);
+
+        $queryParams = [];
+
+        foreach ($matches as $param) {
+            $queryParams[$param[1]] = $param[2];
+        }
+
+        return $queryParams;
+    }
 
     private function normalisePath($path): string {
         $path = trim($path, "/");

@@ -8,7 +8,7 @@ class HttpRequest {
     private Route $route;
 
 
-    public function setRoute(Route $route) {
+    public function setRoute(Route $route): void {
         $this->route = $route;
     }
 

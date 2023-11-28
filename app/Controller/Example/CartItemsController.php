@@ -33,8 +33,8 @@ class CartItemsController {
         return $response;
     }
 
-    // get cart items for logged in user
 
+    // get cart items for logged in user
     public function getUserCart(HttpResponse $response, HttpRequest $request, TokenAuthentication $auth) {
         // retrieve user id from authentication info
         $userId = $auth->getUserId();

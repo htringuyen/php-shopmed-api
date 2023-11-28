@@ -20,6 +20,7 @@
     "filp/whoops": "^2.1",
     "vlucas/phpdotenv": "^5.2",
     "league/flysystem": "^3.19.0",
-    "firebase/php-jwt": "v6.9.0"
+    "firebase/php-jwt": "v6.9.0",
+    "ext-pdo": "*"
   }
 }
