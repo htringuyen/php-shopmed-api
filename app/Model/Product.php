@@ -32,7 +32,7 @@ class Product extends Model {
         "category" => [
             "model" => ProductCategory::class,
             "relationship" => Model::BELONGS_TO,
-            "foreignKey" => "productId",
+            "foreignKey" => "categoryId",
             "maxRefDepth" => 0
         ]
     ];
