@@ -9,7 +9,7 @@ $CORS_ORIGIN_ALLOWED = "http://localhost:3000";
 function applyCorsHeaders($origin) {
     header("Access-Control-Allow-Origin: $origin");
     header("Access-Control-Allow-Credentials: true");
-    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+    header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE');
     header('Access-Control-Allow-Headers: Content-Type, Accept, Authorization');
 }
 
