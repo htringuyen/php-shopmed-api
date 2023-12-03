@@ -63,6 +63,8 @@ class CartItemsController {
 
         // perform querying with Model's static methods
         $cartItems = CartItem::where("userId", $userId)->all();
+        // $cartItem = CartItem::where("userId", $userId)->first();
+        // $cartItems = [$cartItem];
 
         // convert list of CartItem to plain array for transferring to user
         $data = array_map(function (CartItem $item) {
