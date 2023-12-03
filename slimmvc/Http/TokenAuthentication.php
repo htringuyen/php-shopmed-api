@@ -7,6 +7,8 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
 class TokenAuthentication {
+    const ACCESS_TOKEN = "ACCESS_TOKEN";
+    const REFRESH_TOKEN = "REFRESH_TOKEN";
     const DEFAULT_VALID_DURATION = 86400;
     const ENCRYPTION_ALGORITHMS = "HS512";
     const ISSUER = "iss";
@@ -14,15 +16,17 @@ class TokenAuthentication {
     const EXPIRED_AT = "exp";
     const USER_ID = "userId";
     const AUTHORITY = "authority";
+    const TYPE = "type";
 
 
+    private string $type;
     private mixed $userId;
     private mixed $authority;
     private int $createdTime;
     private int $validDuration;
 
 
-    public function createTokenFor(mixed $userId, mixed $authority = null, $validDuration = null) {
+    /*public function createTokenFor(mixed $userId, mixed $authority = null, $validDuration = null): string {
         $domainName = $_ENV['DOMAIN_NAME'];
         $secretKey = $_ENV['AUTH_SECRET_KEY'];
 
@@ -42,10 +46,31 @@ class TokenAuthentication {
         ];
 
         return JWT::encode($tokenData, $secretKey, self::ENCRYPTION_ALGORITHMS);
+    }*/
+
+    static function createTokenFor(mixed $userId, string $type, mixed $authority = null, $validDuration = null): string {
+        $domainName = $_ENV['DOMAIN_NAME'];
+        $secretKey = $_ENV['AUTH_SECRET_KEY'];
+
+        $date = new DateTimeImmutable();
+
+        $createdTime = $date->getTimestamp();
+        $validDuration = is_null($validDuration) ? self::DEFAULT_VALID_DURATION : $validDuration;
+
+        $tokenData = [
+            self::ISSUER => $domainName,
+            self::ISSUED_AT => $createdTime,
+            self::EXPIRED_AT => $createdTime + $validDuration,
+            self::USER_ID => $userId,
+            self::AUTHORITY => $authority,
+            self::TYPE => $type
+        ];
+
+        return JWT::encode($tokenData, $secretKey, self::ENCRYPTION_ALGORITHMS);
     }
 
 
-    public function authenticate(string $token): bool {
+    public function authenticate(string $token, string $type): bool {
         $domainName = $_ENV['DOMAIN_NAME'];
         $secretKey = $_ENV['AUTH_SECRET_KEY'];
 
@@ -56,7 +81,8 @@ class TokenAuthentication {
         if (
             $decryptedData->iss !== $domainName ||
             $decryptedData->iat > $now->getTimestamp() ||
-            $decryptedData->exp < $now->getTimestamp()
+            $decryptedData->exp < $now->getTimestamp() ||
+            $decryptedData->type !== $type
         ) {
             return false;
         }

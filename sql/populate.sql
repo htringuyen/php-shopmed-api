@@ -23,7 +23,7 @@ INSERT INTO ProductCategory (id, name) VALUES
                                            (1000003, 'Medical Supplies'),
                                            (1000004, 'Personal Care');
 
--- Insert data into Product table
+-- Insert data into ProductController table
 INSERT INTO Product (id, name, description, categoryId, inStockCount, price) VALUES
                                                                                  (1000001, 'Antibiotic - Amoxicillin', 'Commonly used for bacterial infections', 1000001, 50, 14.99),
                                                                                  (1000002, 'Pain Reliever - Ibuprofen', 'Reduces pain and inflammation', 1000002, 100, 7.99),

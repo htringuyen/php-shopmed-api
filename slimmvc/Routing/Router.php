@@ -5,6 +5,7 @@ use Closure;
 use Exception;
 use Firebase\JWT\ExpiredException;
 use Slimmvc\Http\HttpResponse;
+use Slimmvc\Http\TokenAuthentication;
 use Slimmvc\Provider\HttpAuthenticationProvider;
 use Slimmvc\Routing\Exception\RouteException;
 use Throwable;
@@ -89,20 +90,20 @@ class Router {
             $isMatched = preg_match("/Bearer\s(\S+)/", $authHeader, $matches);
 
             if (! isset($authHeader) && ! $isMatched) {
-                return $this->handleError(400, "Authorization header required but not found");
+                return $this->handleError(401, "Authorization header required but not found");
             }
 
             $userToken = $matches[1] ?? null;
 
             if (! isset($userToken)) {
-                return $this->handleError(400,
+                return $this->handleError(401,
                     "Not able to extract auth token from header");
             }
 
             $authentication = app(HttpAuthenticationProvider::BEAN_NAME);
 
             try {
-                if (! $authentication->authenticate($userToken)) {
+                if (! $authentication->authenticate($userToken, TokenAuthentication::ACCESS_TOKEN)) {
                     return $this->handleError(401, "Authorization failed!");
                 }
             } catch (ExpiredException $ex) {

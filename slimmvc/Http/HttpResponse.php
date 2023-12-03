@@ -96,6 +96,11 @@ class HttpResponse {
         throw new InvalidArgumentException("{$this->type} is not a recognised type");
     }
 
+    public function setCookie(string $name, string $value, array $options = []): void
+    {
+        setcookie($name, $value, $options);
+    }
+
     public function getType(): string
     {
         return $this->type;

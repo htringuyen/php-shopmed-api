@@ -65,6 +65,10 @@ class HttpRequest {
 
         return null;
     }
+
+    public function getCookie(string $key): ?string {
+        return $_COOKIE[$key] ?? null;
+    }
 }
 
 

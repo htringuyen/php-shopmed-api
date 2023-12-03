@@ -5,7 +5,7 @@ namespace App\Model;
 use Slimmvc\Database\Model;
 
 class Product extends Model {
-    protected string $table = "Product";
+    protected string $table = "ProductController";
 
     protected array $references = [
         "cartItems" => [

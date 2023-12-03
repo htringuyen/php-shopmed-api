@@ -30,6 +30,10 @@ return function (Router $router) {
     );
 
     // login user
-    $router->addRoute("POST", "/dev/login",
-        [\App\Controller\Example\LoginController::class, "login"]);
+    $router->addRoute("POST", "/auth/login",
+        [\App\Controller\Auth\AuthController::class, "login"]);
+
+    // refresh access token
+    $router->addRoute("POST", "/auth/refresh",
+        [\App\Controller\Auth\AuthController::class, "refreshAccessToken"]);
 };
