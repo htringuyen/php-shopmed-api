@@ -2,6 +2,7 @@
 
 namespace Slimmvc\Database\QueryBuilder;
 
+use Exception;
 use Slimmvc\Database\Connection\Connection;
 use Slimmvc\Database\Exception\QueryException;
 use Pdo;
@@ -166,7 +167,7 @@ abstract class QueryBuilder
                 $joinedColumns .= ', ';
             }
 
-            $joinedColumns = " {$column} = :{$column}";
+            $joinedColumns .= " {$column} = :{$column}";
         }
 
         $query .= " UPDATE {$this->table} SET {$joinedColumns}";
@@ -293,7 +294,21 @@ abstract class QueryBuilder
 
         $statement = $this->prepare();
 
-        return $statement->execute($this->getWhereValues() + $values);
+        try {
+            return $statement->execute($this->getWhereValues() + $values);
+        }
+        catch (Exception $e) {
+            //print_r($e);
+            print_r($this->compileUpdate(''));
+            print_r("********* params start:");
+            print_r($this->getWhereValues() + $values);
+            print_r("********* params end*******");
+            print_r("********* columns start:");
+            print_r($columns);
+            print_r("********* columns end*******");
+        }
+
+        return true;
     }
 
     /**

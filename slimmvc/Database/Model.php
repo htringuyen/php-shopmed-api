@@ -25,7 +25,7 @@ abstract class Model
     protected array $serializationIgnores = [];
     protected string $idColumn = self::DEFAULT_ID_COLUMN;
     protected array $attributes = [];
-    protected array $dirty = [];
+    public array $dirty = [];
     protected array $casts = [];
 
     public function setConnection(Connection $connection): static
