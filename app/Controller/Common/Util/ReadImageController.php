@@ -8,7 +8,7 @@ use Slimmvc\Http\HttpResponse;
 
 class ReadImageController {
 
-    public function handle(HttpRequest $request, HttpResponse $response, LocalFilesystemDriver $fileDriver) {
+    public function read(HttpRequest $request, HttpResponse $response, LocalFilesystemDriver $fileDriver) {
         $category = $request->pathVariable("category");
         $imageId = $request->pathVariable("imageId");
 

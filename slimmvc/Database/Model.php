@@ -2,14 +2,8 @@
 
 namespace Slimmvc\Database;
 
-use App\Model\Example\Book;
 use Exception;
 use Slimmvc\Database\Connection\Connection;
-use Slimmvc\Database\Connection\MysqlConnection;
-use Slimmvc\Database\Exception\ConnectionException;
-use Slimmvc\Database\ModelCollector;
-use Slimmvc\Database\Relationship;
-use ReflectionClass;
 use Slimmvc\Provider\DatabaseConnectionProvider;
 
 abstract class Model

@@ -73,8 +73,9 @@ class App extends Container {
 
             $SEP = DIRECTORY_SEPARATOR;
 
+            $relativePath = $basePath.$SEP."app".$SEP;
             $loadRoutes = require $basePath.$SEP."app".$SEP."routes.php";
-            $loadRoutes($router);
+            $loadRoutes($router, $relativePath);
 
             $this->bind(Router::class, fn() => $router);
         }

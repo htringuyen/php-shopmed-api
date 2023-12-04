@@ -294,21 +294,7 @@ abstract class QueryBuilder
 
         $statement = $this->prepare();
 
-        try {
-            return $statement->execute($this->getWhereValues() + $values);
-        }
-        catch (Exception $e) {
-            //print_r($e);
-            print_r($this->compileUpdate(''));
-            print_r("********* params start:");
-            print_r($this->getWhereValues() + $values);
-            print_r("********* params end*******");
-            print_r("********* columns start:");
-            print_r($columns);
-            print_r("********* columns end*******");
-        }
-
-        return true;
+        return $statement->execute($this->getWhereValues() + $values);
     }
 
     /**
