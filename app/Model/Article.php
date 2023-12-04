@@ -22,4 +22,17 @@ class Article extends Model {
             "maxRefDepth" => 1
         ]
     ];
+    /**
+     * @var true
+     */
+    private bool $abusive;
+
+    public function markAsAbusive()
+    {
+        // Kiểm tra nếu bài viết chưa được đánh dấu là bị lạm dụng
+        if (!$this->abusive) {
+            $this->abusive = true;
+            $this->save();
+        }
+    }
 }

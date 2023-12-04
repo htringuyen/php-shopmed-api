@@ -111,4 +111,93 @@ return function (Router $router) {
     $router->addRoute("DELETE", "/admin/users/{userId}",
         handler: [\App\Controller\Admin\AdminUserController::class, "deleteUser"]
     );
+
+    // Get all article comments
+    $router->addRoute("GET", "/admin/article-comments",
+        [\App\Controller\Admin\AdminArticleCommentController::class, "getAllArticleComments"]
+    );
+
+    // Create article comment
+    $router->addRoute("POST", "/admin/article-comments",
+        handler: [\App\Controller\Admin\AdminArticleCommentController::class, "createArticleComment"]
+    );
+
+    // Edit article comment by ID
+    $router->addRoute("PUT", "/admin/article-comments/{commentId}",
+        handler: [\App\Controller\Admin\AdminArticleCommentController::class, "editArticleComment"]
+    );
+
+    // Delete article comment by ID
+    $router->addRoute("DELETE", "/admin/article-comments/{commentId}",
+        handler: [\App\Controller\Admin\AdminArticleCommentController::class, "deleteArticleComment"]
+    );
+
+    // Add feedback to an article comment
+    $router->addRoute("POST", "/admin/article-comments/{commentId}/add-feedback",
+        handler: [\App\Controller\Admin\AdminArticleCommentController::class, "addFeedbackToArticleComment"]
+    );
+
+    // Lấy tất cả bài viết
+    $router->addRoute("GET", "/admin/articles",
+        [\App\Controller\Admin\AdminArticleController::class, "getAllArticles"]
+    );
+
+    // Lấy bài viết theo ID
+    $router->addRoute("GET", "/admin/articles/{articleId}",
+        [\App\Controller\Admin\AdminArticleController::class, "getArticleById"]
+    );
+
+    // Tạo bài viết mới
+    $router->addRoute("POST", "/admin/articles",
+        handler: [\App\Controller\Admin\AdminArticleController::class, "createArticle"]
+    );
+
+    // Chỉnh sửa bài viết theo ID
+    $router->addRoute("PUT", "/admin/articles/{articleId}",
+        handler: [\App\Controller\Admin\AdminArticleController::class, "editArticle"]
+    );
+
+    // Xóa bài viết theo ID
+    $router->addRoute("DELETE", "/admin/articles/{articleId}",
+        handler: [\App\Controller\Admin\AdminArticleController::class, "deleteArticle"]
+    );
+
+    // Đánh dấu bài viết là bị lạm dụng
+    $router->addRoute("POST", "/admin/articles/{articleId}/report-abuse",
+        handler: [\App\Controller\Admin\AdminArticleController::class, "reportAbuse"]
+    );
+
+    // Admin Order Items
+    $router->addRoute("GET", "/admin/order-item",
+        handler: [\App\Controller\Admin\AdminOrderItemController::class, "getAllOrderItems"]
+    );
+
+    $router->addRoute("POST", "/admin/order-item",
+        handler: [\App\Controller\Admin\AdminOrderItemController::class, "createOrderItem"]
+    );
+
+    $router->addRoute("PUT", "/admin/order-item/{orderItemId}",
+        handler: [\App\Controller\Admin\AdminOrderItemController::class, "editOrderItem"]
+    );
+
+    $router->addRoute("DELETE", "/admin/order-item/{orderItemId}",
+        handler: [\App\Controller\Admin\AdminOrderItemController::class, "deleteOrderItem"]
+    );
+
+    // Admin Product Orders
+    $router->addRoute("GET", "/admin/product-order",
+        handler: [\App\Controller\Admin\AdminProductOrderController::class, "getAllProductOrders"]
+    );
+
+    $router->addRoute("POST", "/admin/product-order",
+        handler: [\App\Controller\Admin\AdminProductOrderController::class, "createProductOrder"]
+    );
+
+    $router->addRoute("PUT", "/admin/product-order/{productOrderId}",
+        handler: [\App\Controller\Admin\AdminProductOrderController::class, "editProductOrder"]
+    );
+
+    $router->addRoute("DELETE", "/admin/product-order/{productOrderId}",
+        handler: [\App\Controller\Admin\AdminProductOrderController::class, "deleteProductOrder"]
+    );
 };

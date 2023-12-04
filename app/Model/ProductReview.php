@@ -22,6 +22,10 @@ class ProductReview extends Model {
             "maxRefDepth" => 0
         ]
     ];
+    /**
+     * @var true
+     */
+    private bool $isAbusive;
 
     public function markAsAbusive()
     {
@@ -36,6 +40,4 @@ class ProductReview extends Model {
             $this->save();
         }
     }
-
-
 }
