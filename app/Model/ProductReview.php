@@ -22,5 +22,22 @@ class ProductReview extends Model {
             "maxRefDepth" => 0
         ]
     ];
+    /**
+     * @var true
+     */
+    private bool $isAbusive;
 
+    public function markAsAbusive()
+    {
+        // Kiểm tra xem đánh giá đã được đánh dấu là lạm dụng hay chưa
+        if (!$this->isAbusive) {
+            // Đặt cờ lạm dụng thành true
+            $this->isAbusive = true;
+
+            // Thực hiện các bước kiểm tra và xử lý khác nếu cần thiết
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            $this->save();
+        }
+    }
 }
