@@ -10,7 +10,7 @@ use Slimmvc\Http\TokenAuthentication;
 
 class AuthController {
     const HARD_DURATION = 86400;
-    const SOFT_DURATION = 17;
+    const SOFT_DURATION = 7200;
     const REFRESH_TOKEN_COOKIE_PATH = "/api/v1/common/auth";
     const REFRESH_TOKEN_COOKIE_NAME = "__jwtc_refresh_token";
 

@@ -7,7 +7,7 @@ use Slimmvc\Http\HttpRequest;
 use Slimmvc\Http\HttpResponse;
 use Slimmvc\Http\TokenAuthentication;
 
-class CartItemsController {
+class BusinessCartItemController {
 
     // get cart items for logged-in user from a time
     public function getUserCartFromATime(HttpResponse $response,
