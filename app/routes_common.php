@@ -1,6 +1,6 @@
 <?php
 
-use App\Controller\Auth\AuthController;
+use App\Controller\Common\Auth\AuthController;
 use App\Controller\Util\ReadImageController;
 use Slimmvc\Routing\Router;
 
@@ -15,14 +15,19 @@ return function (Router $router) {
 
     /***** path group: /res *****/
     $router->addRoute(
-        'GET', BASE_PATH.'/res/images/{category}/{imageId}', [ReadImageController::class, "read"]);
-
+        'GET', $BASE_PATH.'/res/images/{category}/{imageId}', [ReadImageController::class, "read"]);
 
     /***** path group: /auth *****/
     $router->addRoute(
-        'POST', BASE_PATH.'/auth/session', [AuthController::class, "login"]);
+        'POST', $BASE_PATH.'/auth/login', [AuthController::class, "login"]);
 
     $router->addRoute(
-        'POST', BASE_PATH.'/auth/refresh', [AuthController::class, "logout"]);
+        'POST', $BASE_PATH.'/auth/logout', [AuthController::class, "logout"], protected: true);
+
+    $router->addRoute(
+        'POST', $BASE_PATH.'/auth/refresh', [AuthController::class, "refreshAccessToken"]);
+
+    $router->addRoute(
+        'GET', $BASE_PATH.'/auth/duration', [AuthController::class, "getSessionDuration"]);
 
 };

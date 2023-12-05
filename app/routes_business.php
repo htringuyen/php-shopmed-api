@@ -12,5 +12,4 @@ return function (Router $router) {
 
 
 
-
 };
