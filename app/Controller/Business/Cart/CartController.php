@@ -13,7 +13,7 @@ class CartController
 {
     public function getAllCartItems(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth){
         $userId = $auth->getUserId();
-        $cartItems = CartItem::query()->where("userId", $userId, "=")->all();
+        $cartItems = CartItem::query()->where("userId", $userId, "=")->where("isActive", true, "=")->all();
         $data = [];
         foreach($cartItems as $cartItem){
             $element = [
@@ -59,8 +59,8 @@ class CartController
     public function increaseQuantity(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth)
     {
         $id = $request->requestParam("cartItemId");
-
-        $cartItem = CartItem::where("id", $id)->first();
+        $userId = $auth->getUserId();
+        $cartItem = CartItem::where("id", $id)->where("userId", $userId)->first();
 
         if (!$cartItem) {
             $response->setType(HttpResponse::JSON);
@@ -79,8 +79,8 @@ class CartController
 
     public function decreaseQuantity(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth){
         $id = $request->requestParam("cartItemId");
-
-        $cartItem = CartItem::where("id", $id)->first();
+        $userId = $auth->getUserId();
+        $cartItem = CartItem::where("id", $id)->where("userId", $userId)->first();
 
         if (!$cartItem) {
             $response->setType(HttpResponse::JSON);
@@ -89,6 +89,8 @@ class CartController
             return $response;
         }
         if ($cartItem->quantity == 1) {
+            $cartItem->isActive = false;
+            $cartItem->save();
             $response->setType(HttpResponse::JSON);
             $response->setContent(["message" => "min Quantity reached"]);
             return $response;
@@ -104,8 +106,8 @@ class CartController
     public function deleteFromCart(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth)
     {
         $id = $request->requestParam("cartItemId");
-
-        $cartItem = CartItem::where("id", $id)->first();
+        $userId = $auth->getUserId();
+        $cartItem = CartItem::where("id", $id)->where("userId", $userId)->first();
 
         if (!$cartItem) {
             $response->setType(HttpResponse::JSON);
@@ -114,8 +116,9 @@ class CartController
             return $response;
         }
 
-        //delete
-        $cartItem->delete();
+        
+        $cartItem->isActive = false;
+        $cartItem->save();
         $response->setType(HttpResponse::JSON);
         $response->setContent($cartItem->toSerializationArray());
         return $response;
