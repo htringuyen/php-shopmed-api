@@ -2,38 +2,35 @@
 
 namespace App\Controller\Admin;
 
-use App\Model\User;
+use App\Model\ProductCategory;
 use Exception;
 use Slimmvc\Http\HttpRequest;
 use Slimmvc\Http\HttpResponse;
 use Slimmvc\Http\TokenAuthentication;
 
-class AdminUserController {
+class AdminProductCategoryController {
 
     public function update(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth) {
-        $userId = $request->pathVariable("id");
+        $categoryId = $request->pathVariable("id");
 
-        $user = User::where("id", $userId)->first();
+        $category = ProductCategory::where("id", $categoryId)->first();
 
-        if (!isset($user)) {
+        if (! isset($category)) {
             $response->setType(HttpResponse::JSON);
             $response->setStatus(404);
-            $response->setContent(["message" => "User not found..."]);
+            $response->setContent(["message" => "Category not found..."]);
             return $response;
         }
 
-        $fields = ["fullName", "email", "address", "phone"];
-        foreach ($fields as $field) {
-            $value = $request->requestParam($field);
-            if (isset($value)) {
-                $user->$field = $value;
-            }
+        $name = $request->requestParam("name");
+        if (isset($name)) {
+            $category->name = $name;
         }
 
         try {
-            $user->save();
+            $category->save();
             $response->setType(HttpResponse::JSON);
-            $response->setContent($user->toSerializationArray());
+            $response->setContent($category->toSerializationArray());
             return $response;
         }
         catch (Exception $e) {
@@ -45,21 +42,16 @@ class AdminUserController {
     }
 
     public function getAllOrSearch(HttpRequest $request, HttpResponse $response) {
-        $searchFields = ["id", "fullName", "email", "address", "phone"];
+        $searchName = $request->requestParam("name");
 
-        $query = User::query();
-
-        foreach ($searchFields as $field) {
-            $searchValue = $request->requestParam($field);
-
-            if (isset($searchValue)) {
-                $query->where($field, "%{$searchValue}%", "like");
-            }
+        $query = ProductCategory::query();
+        if (isset($searchName)) {
+            $query->where("name", "%{$searchName}%", "like");
         }
 
-        $users = $query->all();
+        $categories = $query->all();
 
-        $data = array_map(fn ($user) => $user->toSerializationArray(), $users);
+        $data = array_map(fn($category) => $category->toSerializationArray(), $categories);
 
         $response->setType(HttpResponse::JSON);
         $response->setContent($data);
@@ -67,23 +59,20 @@ class AdminUserController {
     }
 
     public function create(HttpRequest $request, HttpResponse $response) {
-        $user = new User();
+        $category = new ProductCategory();
 
-        $fields = ["fullName", "email", "address", "phone"];
-
-        foreach ($fields as $field) {
-            $value = $request->requestParam($field);
-            if (isset($value)) {
-                $user->$field = $value;
-            }
+        $name = $request->requestParam("name");
+        if (isset($name)) {
+            $category->name = $name;
         }
 
         try {
-            $user->save();
+            $category->save();
             $response->setType(HttpResponse::JSON);
-            $response->setContent($user->toSerializationArray());
+            $response->setContent($category->toSerializationArray());
             return $response;
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             $response->setType(HttpResponse::JSON);
             $response->setStatus(400);
             $response->setContent(["message" => $e->getMessage()]);
@@ -92,21 +81,21 @@ class AdminUserController {
     }
 
     public function delete(HttpRequest $request, HttpResponse $response) {
-        $userId = $request->pathVariable("id");
+        $categoryId = $request->pathVariable("id");
 
-        $user = User::where("id", $userId)->first();
+        $category = ProductCategory::where("id", $categoryId)->first();
 
-        if (!isset($user)) {
+        if (! isset($category)) {
             $response->setType(HttpResponse::JSON);
             $response->setStatus(404);
-            $response->setContent(["message" => "User not found..."]);
+            $response->setContent(["message" => "Category not found..."]);
             return $response;
         }
 
         try {
-            $user->delete();
+            $category->delete();
             $response->setType(HttpResponse::JSON);
-            $response->setContent(["message" => "user " . $user->id . " deleted successfully"]);
+            $response->setContent(["message" => "Category " . $category->id . " deleted successfully"]);
             return $response;
         }
         catch (Exception $e) {

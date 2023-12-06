@@ -3,81 +3,119 @@
 namespace App\Controller\Admin;
 
 use App\Model\ProductOrder;
+use Exception;
+use Slimmvc\Http\HttpRequest;
 use Slimmvc\Http\HttpResponse;
+use Slimmvc\Http\TokenAuthentication;
 
 class AdminProductOrderController
 {
-    public function getAllProductOrders(HttpResponse $response)
+    public function update(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth)
     {
-        $productOrders = ProductOrder::all();
-        $data = [];
-        foreach ($productOrders as $productOrder) {
-            array_push($data, $productOrder->toSerializationArray());
+        $orderId = $request->pathVariable("id");
+
+        $order = ProductOrder::where("id", $orderId)->first();
+
+        if (!isset($order)) {
+            $response->setType(HttpResponse::JSON);
+            $response->setStatus(404);
+            $response->setContent(["message" => "Product order not found..."]);
+            return $response;
         }
+
+        $fields = ["userId", "createdAt", "isPaid", "isDelivered", "status", "note"];
+        foreach ($fields as $field) {
+            $value = $request->requestParam($field);
+            if (isset($value)) {
+                $order->$field = $value;
+            }
+        }
+
+        try {
+            $order->save();
+            $response->setType(HttpResponse::JSON);
+            $response->setContent($order->toSerializationArray());
+            return $response;
+        } catch (Exception $e) {
+            $response->setType(HttpResponse::JSON);
+            $response->setStatus(400);
+            $response->setContent(["message" => $e->getMessage()]);
+            return $response;
+        }
+    }
+
+    public function getAllOrSearch(HttpRequest $request, HttpResponse $response)
+    {
+        $searchStatus = $request->requestParam("status");
+        $searchTrackingNumber = $request->requestParam("trackingNumber");
+
+        $searchFields = ["id", "userId", "createdAt", "isPaid", "isDelivered", "status", "note"];
+
+        $query = ProductOrder::query();
+        foreach ($searchFields as $field) {
+            $searchValue = $request->requestParam($field);
+            if (isset($searchValue)) {
+                $query->where($field, "%{$searchValue}%", "like");
+            }
+        }
+
+        $orders = $query->all();
+
+        $data = array_map(fn($order) => $order->toSerializationArray(), $orders);
 
         $response->setType(HttpResponse::JSON);
         $response->setContent($data);
         return $response;
     }
 
-    public function createProductOrder(HttpResponse $response, $productOrderData)
+    public function create(HttpRequest $request, HttpResponse $response)
     {
-        // Tạo một đối tượng ProductOrder mới từ dữ liệu đầu vào
-        $newProductOrder = new ProductOrder();
-        foreach ($productOrderData as $key => $value) {
-            if (property_exists($newProductOrder, $key)) {
-                $newProductOrder->$key = $value;
+        $order = new ProductOrder();
+
+        $fields = ["userId", "createdAt", "isPaid", "isDelivered", "status", "note"];
+        foreach ($fields as $field) {
+            $value = $request->requestParam($field);
+            if (isset($value)) {
+                $order->$field = $value;
             }
         }
 
-        $newProductOrder->save();
-
-        $responseData = $newProductOrder->toSerializationArray();
-
-        $response->setType(HttpResponse::JSON);
-        $response->setContent($responseData);
-        return $response;
+        try {
+            $order->save();
+            $response->setType(HttpResponse::JSON);
+            $response->setContent($order->toSerializationArray());
+            return $response;
+        } catch (Exception $e) {
+            $response->setType(HttpResponse::JSON);
+            $response->setStatus(400);
+            $response->setContent(["message" => $e->getMessage()]);
+            return $response;
+        }
     }
 
-    public function editProductOrder(HttpResponse $response, $productOrderId, $productOrderData)
+    public function delete(HttpRequest $request, HttpResponse $response)
     {
-        $productOrder = ProductOrder::find($productOrderId);
+        $orderId = $request->pathVariable("id");
 
-        if (!$productOrder) {
+        $order = ProductOrder::where("id", $orderId)->first();
+
+        if (!isset($order)) {
             $response->setType(HttpResponse::JSON);
-            $response->setContent(['error' => 'Product order not found']);
+            $response->setStatus(404);
+            $response->setContent(["message" => "Product order not found..."]);
             return $response;
         }
 
-        foreach ($productOrderData as $key => $value) {
-            if (property_exists($productOrder, $key)) {
-                $productOrder->$key = $value;
-            }
-        }
-
-        $productOrder->save();
-
-        $responseData = $productOrder->toSerializationArray();
-
-        $response->setType(HttpResponse::JSON);
-        $response->setContent($responseData);
-        return $response;
-    }
-
-    public function deleteProductOrder(HttpResponse $response, $productOrderId)
-    {
-        $productOrder = ProductOrder::find($productOrderId);
-
-        if (!$productOrder) {
+        try {
+            $order->delete();
             $response->setType(HttpResponse::JSON);
-            $response->setContent(['error' => 'Product order not found']);
+            $response->setContent(["message" => "Product order {$order->id} deleted successfully"]);
+            return $response;
+        } catch (Exception $e) {
+            $response->setType(HttpResponse::JSON);
+            $response->setStatus(400);
+            $response->setContent(["message" => $e->getMessage()]);
             return $response;
         }
-
-        $productOrder->delete();
-
-        $response->setType(HttpResponse::JSON);
-        $response->setContent(['message' => 'Product order deleted successfully']);
-        return $response;
     }
 }

@@ -2,38 +2,38 @@
 
 namespace App\Controller\Admin;
 
-use App\Model\User;
+use App\Model\CartItem;
 use Exception;
 use Slimmvc\Http\HttpRequest;
 use Slimmvc\Http\HttpResponse;
 use Slimmvc\Http\TokenAuthentication;
 
-class AdminUserController {
+class AdminCartItemController {
 
     public function update(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth) {
-        $userId = $request->pathVariable("id");
+        $cartItemId = $request->pathVariable("id");
 
-        $user = User::where("id", $userId)->first();
+        $cartItem = CartItem::where("id", $cartItemId)->first();
 
-        if (!isset($user)) {
+        if (! isset($cartItem)) {
             $response->setType(HttpResponse::JSON);
             $response->setStatus(404);
-            $response->setContent(["message" => "User not found..."]);
+            $response->setContent(["message" => "Cart item not found..."]);
             return $response;
         }
 
-        $fields = ["fullName", "email", "address", "phone"];
-        foreach ($fields as $field) {
+        $fields = ["productId", "userId", "createdAt", "quantity", "isActive"];
+        foreach($fields as $field) {
             $value = $request->requestParam($field);
             if (isset($value)) {
-                $user->$field = $value;
+                $cartItem->$field = $value;
             }
         }
 
         try {
-            $user->save();
+            $cartItem->save();
             $response->setType(HttpResponse::JSON);
-            $response->setContent($user->toSerializationArray());
+            $response->setContent($cartItem->toSerializationArray());
             return $response;
         }
         catch (Exception $e) {
@@ -45,21 +45,19 @@ class AdminUserController {
     }
 
     public function getAllOrSearch(HttpRequest $request, HttpResponse $response) {
-        $searchFields = ["id", "fullName", "email", "address", "phone"];
+        $searchFields = ["id", "productId", "userId", "createdAt", "quantity", "isActive"];
 
-        $query = User::query();
-
-        foreach ($searchFields as $field) {
+        $query = CartItem::query();
+        foreach($searchFields as $field) {
             $searchValue = $request->requestParam($field);
-
             if (isset($searchValue)) {
                 $query->where($field, "%{$searchValue}%", "like");
             }
         }
 
-        $users = $query->all();
+        $cartItems = $query->all();
 
-        $data = array_map(fn ($user) => $user->toSerializationArray(), $users);
+        $data = array_map(fn($cartItem) => $cartItem->toSerializationArray(), $cartItems);
 
         $response->setType(HttpResponse::JSON);
         $response->setContent($data);
@@ -67,23 +65,23 @@ class AdminUserController {
     }
 
     public function create(HttpRequest $request, HttpResponse $response) {
-        $user = new User();
+        $cartItem = new CartItem();
 
-        $fields = ["fullName", "email", "address", "phone"];
-
-        foreach ($fields as $field) {
+        $fields = ["productId", "userId", "createdAt", "quantity", "isActive"];
+        foreach($fields as $field) {
             $value = $request->requestParam($field);
             if (isset($value)) {
-                $user->$field = $value;
+                $cartItem->$field = $value;
             }
         }
 
         try {
-            $user->save();
+            $cartItem->save();
             $response->setType(HttpResponse::JSON);
-            $response->setContent($user->toSerializationArray());
+            $response->setContent($cartItem->toSerializationArray());
             return $response;
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             $response->setType(HttpResponse::JSON);
             $response->setStatus(400);
             $response->setContent(["message" => $e->getMessage()]);
@@ -92,21 +90,21 @@ class AdminUserController {
     }
 
     public function delete(HttpRequest $request, HttpResponse $response) {
-        $userId = $request->pathVariable("id");
+        $cartItemId = $request->pathVariable("id");
 
-        $user = User::where("id", $userId)->first();
+        $cartItem = CartItem::where("id", $cartItemId)->first();
 
-        if (!isset($user)) {
+        if (! isset($cartItem)) {
             $response->setType(HttpResponse::JSON);
             $response->setStatus(404);
-            $response->setContent(["message" => "User not found..."]);
+            $response->setContent(["message" => "Cart item not found..."]);
             return $response;
         }
 
         try {
-            $user->delete();
+            $cartItem->delete();
             $response->setType(HttpResponse::JSON);
-            $response->setContent(["message" => "user " . $user->id . " deleted successfully"]);
+            $response->setContent(["message" => "Cart item " . $cartItem->id . " deleted successfully"]);
             return $response;
         }
         catch (Exception $e) {

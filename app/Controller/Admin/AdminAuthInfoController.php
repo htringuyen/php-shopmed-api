@@ -2,39 +2,38 @@
 
 namespace App\Controller\Admin;
 
-use App\Model\OrderItem;
+use App\Model\AuthInfo;
 use Exception;
 use Slimmvc\Http\HttpRequest;
 use Slimmvc\Http\HttpResponse;
 use Slimmvc\Http\TokenAuthentication;
 
-class AdminOrderItemController
-{
-    public function update(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth)
-    {
-        $orderItemId = $request->pathVariable("id");
+class AdminAuthInfoController {
 
-        $orderItem = OrderItem::where("id", $orderItemId)->first();
+    public function update(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth) {
+        $authInfoId = $request->pathVariable("id");
 
-        if (!isset($orderItem)) {
+        $authInfo = AuthInfo::where("id", $authInfoId)->first();
+
+        if (!isset($authInfo)) {
             $response->setType(HttpResponse::JSON);
             $response->setStatus(404);
-            $response->setContent(["message" => "Order item not found"]);
+            $response->setContent(["message" => "AuthInfo not found..."]);
             return $response;
         }
 
-        $fields = ["productId", "orderId", "price", "quantity"];
+        $fields = ["username", "passwordHash", "authority", "userId"];
         foreach ($fields as $field) {
             $value = $request->requestParam($field);
             if (isset($value)) {
-                $orderItem->$field = $value;
+                $authInfo->$field = $value;
             }
         }
 
         try {
-            $orderItem->save();
+            $authInfo->save();
             $response->setType(HttpResponse::JSON);
-            $response->setContent($orderItem->toSerializationArray());
+            $response->setContent($authInfo->toSerializationArray());
             return $response;
         } catch (Exception $e) {
             $response->setType(HttpResponse::JSON);
@@ -44,11 +43,10 @@ class AdminOrderItemController
         }
     }
 
-    public function getAllOrSearch(HttpRequest $request, HttpResponse $response)
-    {
-        $searchFields = ["id", "productId", "orderId", "price", "quantity"];
+    public function getAllOrSearch(HttpRequest $request, HttpResponse $response) {
+        $searchFields = ["id", "username", "authority", "userId"];
 
-        $query = OrderItem::query();
+        $query = AuthInfo::query();
         foreach ($searchFields as $field) {
             $searchValue = $request->requestParam($field);
             if (isset($searchValue)) {
@@ -56,31 +54,30 @@ class AdminOrderItemController
             }
         }
 
-        $orderItems = $query->all();
+        $authInfos = $query->all();
 
-        $data = array_map(fn($orderItem) => $orderItem->toSerializationArray(), $orderItems);
+        $data = array_map(fn($authInfo) => $authInfo->toSerializationArray(), $authInfos);
 
         $response->setType(HttpResponse::JSON);
         $response->setContent($data);
         return $response;
     }
 
-    public function create(HttpRequest $request, HttpResponse $response)
-    {
-        $orderItem = new OrderItem();
+    public function create(HttpRequest $request, HttpResponse $response) {
+        $authInfo = new AuthInfo();
 
-        $fields = ["productId", "orderId", "price", "quantity"];
+        $fields = ["username", "passwordHash", "authority", "userId"];
         foreach ($fields as $field) {
             $value = $request->requestParam($field);
             if (isset($value)) {
-                $orderItem->$field = $value;
+                $authInfo->$field = $value;
             }
         }
 
         try {
-            $orderItem->save();
+            $authInfo->save();
             $response->setType(HttpResponse::JSON);
-            $response->setContent($orderItem->toSerializationArray());
+            $response->setContent($authInfo->toSerializationArray());
             return $response;
         } catch (Exception $e) {
             $response->setType(HttpResponse::JSON);
@@ -90,23 +87,22 @@ class AdminOrderItemController
         }
     }
 
-    public function delete(HttpRequest $request, HttpResponse $response)
-    {
-        $orderItemId = $request->pathVariable("id");
+    public function delete(HttpRequest $request, HttpResponse $response) {
+        $authInfoId = $request->pathVariable("id");
 
-        $orderItem = OrderItem::where("id", $orderItemId)->first();
+        $authInfo = AuthInfo::where("id", $authInfoId)->first();
 
-        if (!isset($orderItem)) {
+        if (!isset($authInfo)) {
             $response->setType(HttpResponse::JSON);
             $response->setStatus(404);
-            $response->setContent(["message" => "Order item not found"]);
+            $response->setContent(["message" => "AuthInfo not found..."]);
             return $response;
         }
 
         try {
-            $orderItem->delete();
+            $authInfo->delete();
             $response->setType(HttpResponse::JSON);
-            $response->setContent(["message" => "Order item {$orderItem->id} deleted successfully"]);
+            $response->setContent(["message" => "AuthInfo " . $authInfo->id . " deleted successfully"]);
             return $response;
         } catch (Exception $e) {
             $response->setType(HttpResponse::JSON);

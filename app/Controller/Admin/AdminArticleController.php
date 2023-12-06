@@ -3,116 +3,116 @@
 namespace App\Controller\Admin;
 
 use App\Model\Article;
+use Exception;
+use Slimmvc\Http\HttpRequest;
 use Slimmvc\Http\HttpResponse;
+use Slimmvc\Http\TokenAuthentication;
 
 class AdminArticleController
 {
-    function getAllArticles(HttpResponse $response)
+    public function update(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth)
     {
-        $articles = Article::all();
-        $data = [];
-        foreach ($articles as $article) {
-            array_push($data, $article->toSerializationArray());
+        $articleId = $request->pathVariable("id");
+
+        $article = Article::where("id", $articleId)->first();
+
+        if (!isset($article)) {
+            $response->setType(HttpResponse::JSON);
+            $response->setStatus(404);
+            $response->setContent(["message" => "Article not found"]);
+            return $response;
         }
+
+        $fields = ["title", "content", "publishedOn", "userId"];
+        foreach ($fields as $field) {
+            $value = $request->requestParam($field);
+            if (isset($value)) {
+                $article->$field = $value;
+            }
+        }
+
+        try {
+            $article->save();
+            $response->setType(HttpResponse::JSON);
+            $response->setContent($article->toSerializationArray());
+            return $response;
+        } catch (Exception $e) {
+            $response->setType(HttpResponse::JSON);
+            $response->setStatus(400);
+            $response->setContent(["message" => $e->getMessage()]);
+            return $response;
+        }
+    }
+
+    public function getAllOrSearch(HttpRequest $request, HttpResponse $response)
+    {
+        $searchFields = ["id", "title", "content", "publishedOn", "userId"];
+
+        $query = Article::query();
+        foreach ($searchFields as $field) {
+            $searchValue = $request->requestParam($field);
+            if (isset($searchValue)) {
+                $query->where($field, "%{$searchValue}%", "like");
+            }
+        }
+
+        $articles = $query->all();
+
+        $data = array_map(fn($article) => $article->toSerializationArray(), $articles);
 
         $response->setType(HttpResponse::JSON);
         $response->setContent($data);
         return $response;
     }
 
-    function getArticleById(HttpResponse $response, $articleId)
+    public function create(HttpRequest $request, HttpResponse $response)
     {
-        $article = Article::find($articleId);
+        $article = new Article();
 
-        if (!$article) {
-            $response->setType(HttpResponse::JSON);
-            $response->setContent(['error' => 'Article not found']);
-            return $response;
-        }
-
-        $responseData = $article->toSerializationArray();
-
-        $response->setType(HttpResponse::JSON);
-        $response->setContent($responseData);
-        return $response;
-    }
-
-    function createArticle(HttpResponse $response, $articleData)
-    {
-        $newArticle = new Article();
-        foreach ($articleData as $key => $value) {
-            if (property_exists($newArticle, $key)) {
-                $newArticle->$key = $value;
+        $fields = ["title", "content", "publishedOn", "userId"];
+        foreach ($fields as $field) {
+            $value = $request->requestParam($field);
+            if (isset($value)) {
+                $article->$field = $value;
             }
         }
 
-        $newArticle->save();
-
-        $responseData = $newArticle->toSerializationArray();
-
-        $response->setType(HttpResponse::JSON);
-        $response->setContent($responseData);
-        return $response;
+        try {
+            $article->save();
+            $response->setType(HttpResponse::JSON);
+            $response->setContent($article->toSerializationArray());
+            return $response;
+        } catch (Exception $e) {
+            $response->setType(HttpResponse::JSON);
+            $response->setStatus(400);
+            $response->setContent(["message" => $e->getMessage()]);
+            return $response;
+        }
     }
 
-    function editArticle(HttpResponse $response, $articleId, $articleData)
+    public function delete(HttpRequest $request, HttpResponse $response)
     {
-        $article = Article::find($articleId);
+        $articleId = $request->pathVariable("id");
 
-        if (!$article) {
+        $article = Article::where("id", $articleId)->first();
+
+        if (!isset($article)) {
             $response->setType(HttpResponse::JSON);
-            $response->setContent(['error' => 'Article not found']);
+            $response->setStatus(404);
+            $response->setContent(["message" => "Article not found"]);
             return $response;
         }
 
-        foreach ($articleData as $key => $value) {
-            if (property_exists($article, $key)) {
-                $article->$key = $value;
-            }
-        }
-        $article->save();
-
-        $responseData = $article->toSerializationArray();
-
-        $response->setType(HttpResponse::JSON);
-        $response->setContent($responseData);
-        return $response;
-    }
-
-    function deleteArticle(HttpResponse $response, $articleId)
-    {
-        $article = Article::find($articleId);
-
-        if (!$article) {
+        try {
+            $article->delete();
             $response->setType(HttpResponse::JSON);
-            $response->setContent(['error' => 'Article not found']);
+            $response->setContent(["message" => "Article {$article->id} deleted successfully"]);
+            return $response;
+        } catch (Exception $e) {
+            $response->setType(HttpResponse::JSON);
+            $response->setStatus(400);
+            $response->setContent(["message" => $e->getMessage()]);
             return $response;
         }
-
-        $article->delete();
-
-        $response->setType(HttpResponse::JSON);
-        $response->setContent(['message' => 'Article deleted successfully']);
-        return $response;
-    }
-
-    function reportAbuse(HttpResponse $response, $articleId)
-    {
-        $article = Article::find($articleId);
-
-        if (!$article) {
-            $response->setType(HttpResponse::JSON);
-            $response->setContent(['error' => 'Article not found']);
-            return $response;
-        }
-
-        // Assuming there's a method markAsAbusive in the Article model
-        $article->markAsAbusive();
-
-        $article->save();
-
-        $response->setType(HttpResponse::JSON);
-        $response->setContent(['message' => 'Article reported as abusive']);
-        return $response;
     }
 }

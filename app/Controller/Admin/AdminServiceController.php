@@ -2,39 +2,38 @@
 
 namespace App\Controller\Admin;
 
-use App\Model\OrderItem;
+use App\Model\Service;
 use Exception;
 use Slimmvc\Http\HttpRequest;
 use Slimmvc\Http\HttpResponse;
 use Slimmvc\Http\TokenAuthentication;
 
-class AdminOrderItemController
-{
-    public function update(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth)
-    {
-        $orderItemId = $request->pathVariable("id");
+class AdminServiceController {
 
-        $orderItem = OrderItem::where("id", $orderItemId)->first();
+    public function update(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth) {
+        $serviceId = $request->pathVariable("id");
 
-        if (!isset($orderItem)) {
+        $service = Service::where("id", $serviceId)->first();
+
+        if (!isset($service)) {
             $response->setType(HttpResponse::JSON);
             $response->setStatus(404);
-            $response->setContent(["message" => "Order item not found"]);
+            $response->setContent(["message" => "Service not found..."]);
             return $response;
         }
 
-        $fields = ["productId", "orderId", "price", "quantity"];
+        $fields = ["name", "description", "categoryId", "price"];
         foreach ($fields as $field) {
             $value = $request->requestParam($field);
             if (isset($value)) {
-                $orderItem->$field = $value;
+                $service->$field = $value;
             }
         }
 
         try {
-            $orderItem->save();
+            $service->save();
             $response->setType(HttpResponse::JSON);
-            $response->setContent($orderItem->toSerializationArray());
+            $response->setContent($service->toSerializationArray());
             return $response;
         } catch (Exception $e) {
             $response->setType(HttpResponse::JSON);
@@ -44,11 +43,10 @@ class AdminOrderItemController
         }
     }
 
-    public function getAllOrSearch(HttpRequest $request, HttpResponse $response)
-    {
-        $searchFields = ["id", "productId", "orderId", "price", "quantity"];
+    public function getAllOrSearch(HttpRequest $request, HttpResponse $response) {
+        $searchFields = ["id", "name", "description", "categoryId", "price"];
 
-        $query = OrderItem::query();
+        $query = Service::query();
         foreach ($searchFields as $field) {
             $searchValue = $request->requestParam($field);
             if (isset($searchValue)) {
@@ -56,31 +54,30 @@ class AdminOrderItemController
             }
         }
 
-        $orderItems = $query->all();
+        $services = $query->all();
 
-        $data = array_map(fn($orderItem) => $orderItem->toSerializationArray(), $orderItems);
+        $data = array_map(fn($service) => $service->toSerializationArray(), $services);
 
         $response->setType(HttpResponse::JSON);
         $response->setContent($data);
         return $response;
     }
 
-    public function create(HttpRequest $request, HttpResponse $response)
-    {
-        $orderItem = new OrderItem();
+    public function create(HttpRequest $request, HttpResponse $response) {
+        $service = new Service();
 
-        $fields = ["productId", "orderId", "price", "quantity"];
+        $fields = ["name", "description", "categoryId", "price"];
         foreach ($fields as $field) {
             $value = $request->requestParam($field);
             if (isset($value)) {
-                $orderItem->$field = $value;
+                $service->$field = $value;
             }
         }
 
         try {
-            $orderItem->save();
+            $service->save();
             $response->setType(HttpResponse::JSON);
-            $response->setContent($orderItem->toSerializationArray());
+            $response->setContent($service->toSerializationArray());
             return $response;
         } catch (Exception $e) {
             $response->setType(HttpResponse::JSON);
@@ -90,23 +87,22 @@ class AdminOrderItemController
         }
     }
 
-    public function delete(HttpRequest $request, HttpResponse $response)
-    {
-        $orderItemId = $request->pathVariable("id");
+    public function delete(HttpRequest $request, HttpResponse $response) {
+        $serviceId = $request->pathVariable("id");
 
-        $orderItem = OrderItem::where("id", $orderItemId)->first();
+        $service = Service::where("id", $serviceId)->first();
 
-        if (!isset($orderItem)) {
+        if (!isset($service)) {
             $response->setType(HttpResponse::JSON);
             $response->setStatus(404);
-            $response->setContent(["message" => "Order item not found"]);
+            $response->setContent(["message" => "Service not found..."]);
             return $response;
         }
 
         try {
-            $orderItem->delete();
+            $service->delete();
             $response->setType(HttpResponse::JSON);
-            $response->setContent(["message" => "Order item {$orderItem->id} deleted successfully"]);
+            $response->setContent(["message" => "Service " . $service->id . " deleted successfully"]);
             return $response;
         } catch (Exception $e) {
             $response->setType(HttpResponse::JSON);
