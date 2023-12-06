@@ -70,7 +70,11 @@ class TokenAuthentication {
     }
 
 
-    public function authenticate(string $token, string $type): bool {
+    public function authenticate(?string $token, ?string $type): bool {
+        if (! isset($token) || ! isset($type)) {
+            return false;
+        }
+
         $domainName = $_ENV['DOMAIN_NAME'];
         $secretKey = $_ENV['AUTH_SECRET_KEY'];
 
@@ -135,7 +139,7 @@ class TokenAuthentication {
 
     public function isEnoughAuthorityFor(mixed $routeAuthority): bool {
         if (is_int($routeAuthority) && is_int($this->authority)) {
-            return $this->authority < $routeAuthority;
+            return $this->authority <= $routeAuthority;
         }
 
         return false;

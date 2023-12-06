@@ -1,6 +1,7 @@
 <?php
 
 use App\Controller\Common\Auth\AuthController;
+use App\Controller\Common\Auth\UserInfoController;
 use App\Controller\Util\ReadImageController;
 use Slimmvc\Routing\Router;
 
@@ -30,4 +31,7 @@ return function (Router $router) {
     $router->addRoute(
         'GET', $BASE_PATH.'/auth/duration', [AuthController::class, "getSessionDuration"]);
 
+    /***** path group: auth/user-info *****/
+    $router->addRoute(
+        'GET', $BASE_PATH.'/auth/user-info', [UserInfoController::class, "getUserInfo"], protected: true);
 };

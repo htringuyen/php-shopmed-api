@@ -9,12 +9,17 @@ use Slimmvc\Http\HttpResponse;
 use Slimmvc\Http\TokenAuthentication;
 
 class AuthController {
-    const HARD_DURATION = 86400;
-    const SOFT_DURATION = 7200;
+    /*const HARD_DURATION = 86400;
+    const SOFT_DURATION = 7200;*/
+
     const REFRESH_TOKEN_COOKIE_PATH = "/api/v1/common/auth";
     const REFRESH_TOKEN_COOKIE_NAME = "__jwtc_refresh_token";
 
     public function login(HttpRequest $request, HttpResponse $response): HttpResponse {
+
+        $HARD_DURATION = intval($_ENV['REFRESH_TOKEN_EXPIRATION']);
+        $SOFT_DURATION = intval($_ENV['ACCESS_TOKEN_EXPIRATION']);
+
         $authHeaderValue = $request->getBasicAuthorizationHeaderValue();
         $credentials = explode(":", base64_decode($authHeaderValue));
         $username = $credentials[0];
@@ -34,17 +39,17 @@ class AuthController {
 
         $refreshToken = TokenAuthentication::createTokenFor(
             $authUser->id, TokenAuthentication::REFRESH_TOKEN,
-            $authUser->authority, self::HARD_DURATION);
+            $authInfo->authority, $HARD_DURATION);
 
         $accessToken = TokenAuthentication::createTokenFor(
             $authUser->id, TokenAuthentication::ACCESS_TOKEN,
-            $authUser->authority, self::SOFT_DURATION);
+            $authInfo->authority, $SOFT_DURATION);
 
         $response->setType(HttpResponse::JSON);
 
         // set refresh token as cookie with httpOnly
         $response->setCookie(self::REFRESH_TOKEN_COOKIE_NAME, $refreshToken, [
-            "expires" => time() + self::HARD_DURATION,
+            "expires" => time() + $HARD_DURATION,
             "path" => self::REFRESH_TOKEN_COOKIE_PATH,
             "secure" => false,
             "httponly" => true,
@@ -56,8 +61,8 @@ class AuthController {
             "userId" => $authUser->id,
             "authority" => $authInfo->authority,
             "accessToken" => $accessToken,
-            "hardDuration" => self::HARD_DURATION,
-            "softDuration" => self::SOFT_DURATION
+            "hardDuration" => $HARD_DURATION,
+            "softDuration" => $SOFT_DURATION
         ]);
 
         return $response;
@@ -66,7 +71,7 @@ class AuthController {
 
     public function logout(HttpRequest $request, HttpResponse $response) {
         $response->setCookie(self::REFRESH_TOKEN_COOKIE_NAME, "", [
-            "expires" => time() - self::HARD_DURATION,
+            "expires" => time() - 3600,
             "path" => self::REFRESH_TOKEN_COOKIE_PATH,
             "secure" => false,
             "httponly" => true,
@@ -107,6 +112,9 @@ class AuthController {
 
     public function refreshAccessToken(HttpRequest $request, HttpResponse $response,
                                        TokenAuthentication $auth): HttpResponse {
+        $HARD_DURATION = intval($_ENV['REFRESH_TOKEN_EXPIRATION']);
+        $SOFT_DURATION = intval($_ENV['ACCESS_TOKEN_EXPIRATION']);
+
         $refreshToken = $request->getCookie(self::REFRESH_TOKEN_COOKIE_NAME);
 
         $authorized = $auth->authenticate($refreshToken, TokenAuthentication::REFRESH_TOKEN);
@@ -123,7 +131,7 @@ class AuthController {
 
         $accessToken = TokenAuthentication::createTokenFor(
             $auth->getUserId(), TokenAuthentication::ACCESS_TOKEN,
-            $auth->getAuthority(), self::SOFT_DURATION);
+            $auth->getAuthority(), $SOFT_DURATION);
 
         $response->setType(HttpResponse::JSON);
         $response->setStatus(200);
