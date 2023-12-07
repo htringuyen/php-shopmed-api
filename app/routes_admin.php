@@ -103,24 +103,24 @@ return function (Router $router) {
     $router->addRoute('DELETE', $BASE_PATH."/service-category/{id}", [AdminServiceCategoryController::class, "delete"], protected: true, authority: 1);
 
     /***** path group: /auth-info *****/
-    $router->addRoute('PUT', $BASE_PATH."/auth-info/{id}", [AdminServiceCategoryController::class, "update"], protected: true, authority: 1);
+    $router->addRoute('PUT', $BASE_PATH."/auth-info/{id}", [AdminAuthInfoController::class, "update"], protected: true, authority: 1);
 
-    $router->addRoute('GET', $BASE_PATH."/auth-info", [AdminServiceCategoryController::class, "getAllOrSearch"], protected: true, authority: 1);
+    $router->addRoute('GET', $BASE_PATH."/auth-info", [AdminAuthInfoController::class, "getAllOrSearch"], protected: true, authority: 1);
 
-    $router->addRoute('POST', $BASE_PATH."/auth-info", [AdminServiceCategoryController::class, "create"], protected: true, authority: 1);
+    $router->addRoute('POST', $BASE_PATH."/auth-info", [AdminAuthInfoController::class, "create"], protected: true, authority: 1);
 
-    $router->addRoute('DELETE', $BASE_PATH."/auth-info/{id}", [AdminServiceCategoryController::class, "delete"], protected: true, authority: 1);
-
-    /***** path group: /product-category *****/
-    $router->addRoute('PUT', $BASE_PATH."/product-category/{id}", [AdminServiceCategoryController::class, "update"], protected: true, authority: 1);
-
-    $router->addRoute('GET', $BASE_PATH."/product-category", [AdminServiceCategoryController::class, "getAllOrSearch"], protected: true, authority: 1);
-
-    $router->addRoute('POST', $BASE_PATH."/product-category", [AdminServiceCategoryController::class, "create"], protected: true, authority: 1);
-
-    $router->addRoute('DELETE', $BASE_PATH."/product-category/{id}", [AdminServiceCategoryController::class, "delete"], protected: true, authority: 1);
+    $router->addRoute('DELETE', $BASE_PATH."/auth-info/{id}", [AdminAuthInfoController::class, "delete"], protected: true, authority: 1);
 
     /***** path group: /product-category *****/
+    $router->addRoute('PUT', $BASE_PATH."/product-category/{id}", [AdminProductCategoryController::class, "update"], protected: true, authority: 1);
+
+    $router->addRoute('GET', $BASE_PATH."/product-category", [AdminProductCategoryController::class, "getAllOrSearch"], protected: true, authority: 1);
+
+    $router->addRoute('POST', $BASE_PATH."/product-category", [AdminProductCategoryController::class, "create"], protected: true, authority: 1);
+
+    $router->addRoute('DELETE', $BASE_PATH."/product-category/{id}", [AdminProductCategoryController::class, "delete"], protected: true, authority: 1);
+
+    /***** path group: /cartitems *****/
     $router->addRoute('PUT', $BASE_PATH."/cartitems/{id}", [AdminCartItemController::class, "update"], protected: true, authority: 1);
 
     $router->addRoute('GET', $BASE_PATH."/cartitems", [AdminCartItemController::class, "getAllOrSearch"], protected: true, authority: 1);
