@@ -19,6 +19,7 @@ return function (Router $router) {
     $router->addRoute('GET', $BASE_PATH."/cart", [CartController::class, "getAllCartItems"] , protected: true  );
     $router->addRoute('POST', $BASE_PATH."/cart", [CartController::class, "addNewCartItem"] , protected: true, requiredParams: ["productId"] );
     $router->addRoute('DELETE', $BASE_PATH."/cart", [CartController::class, "deleteFromCart"] , protected: true, requiredParams: ["cartItemId"]);
+    $router->addRoute('GET', $BASE_PATH."/cart/count", [CartController::class, "countCartItem"] , protected: true);
 
 
     //cart item

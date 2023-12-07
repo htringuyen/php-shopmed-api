@@ -123,4 +123,17 @@ class CartController
         $response->setContent($cartItem->toSerializationArray());
         return $response;
     }
+
+    public function countCartItem(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth)
+    {
+        $userId = $auth->getUserId();
+        $cartItems = CartItem::query()->where("userId", $userId)->where("isActive", true)->all();
+        $count = 0;
+        foreach($cartItems as $cartItem){
+            $count += $cartItem->quantity;
+        }
+        $response->setType(HttpResponse::JSON);
+        $response->setContent(["count" => $count]);
+        return $response;
+    }
 }
