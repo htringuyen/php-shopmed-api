@@ -82,7 +82,7 @@ class UserController {
         $authInfo = new AuthInfo();
         $authInfo -> username = $request->requestParam("username");
         $authInfo -> passwordHash = $request->requestParam("password");
-        $authInfo -> authority = 1;
+        $authInfo -> authority = $_ENV["DEFAULT_AUTHORITY"];
         $authInfo -> userId = $user -> id;
         
         try {
