@@ -130,7 +130,7 @@ class CartController
         $cartItems = CartItem::query()->where("userId", $userId)->where("isActive", true)->all();
         $count = 0;
         foreach($cartItems as $cartItem){
-            $count += $cartItem->quantity;
+            $count += 1;
         }
         $response->setType(HttpResponse::JSON);
         $response->setContent(["count" => $count]);
