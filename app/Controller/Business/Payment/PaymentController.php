@@ -43,6 +43,7 @@ class PaymentController
         //CartItem::query()->where("userId", $userId)->delete();
         foreach ($cartItems as $cartItem) {
             $cartItem->isActive = false;
+            $cartItem->save();
         }
         $response->setType(HttpResponse::JSON);
         $response->setContent(["message" => "Order created successfully"]);
