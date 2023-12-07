@@ -3,6 +3,8 @@
 use App\Controller\Content\Article\ArticleController;
 use App\Controller\Content\ArticleComment\ArticleCommentController;
 use App\Controller\Content\User\UserController;
+use App\Controller\Content\ProductOrder\ProductOrderController;
+use App\Controller\Content\OrderItem\OrderItemController;
 use App\Controller\Content\AuthInfo\AuthInfoController;
 use App\Controller\Util\ReadImageController;
 use Slimmvc\Routing\Router;
@@ -29,4 +31,10 @@ return function (Router $router) {
 
     /***** path group: /AuthInfor *****/
     $router->addRoute('PUT', $BASE_PATH."/authinfo/update", [AuthInfoController::class, "update"], protected: true);
+
+    //ProductOrder
+    $router->addRoute('GET', $BASE_PATH."/productorder", [ProductOrderController::class, "getAll"] , protected: true  );
+
+    //OrderItem
+    $router->addRoute('GET', $BASE_PATH."/orderitem", [OrderItemController::class, "getAll"] , protected: true  );
 };
