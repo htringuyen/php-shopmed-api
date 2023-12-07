@@ -2,7 +2,7 @@
 
 use App\Controller\Common\Auth\AuthController;
 use App\Controller\Common\Auth\UserInfoController;
-use App\Controller\Util\ReadImageController;
+use App\Controller\Common\Util\ReadImageController;
 use Slimmvc\Routing\Router;
 
 /** Author: ..... */
