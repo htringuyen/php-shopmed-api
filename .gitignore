@@ -3,3 +3,4 @@ composer.lock
 composer.phar
 .idea
 z-old-*
+.env
