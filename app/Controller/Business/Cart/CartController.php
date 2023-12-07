@@ -13,7 +13,7 @@ class CartController
 {
     public function getAllCartItems(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth){
         $userId = $auth->getUserId();
-        $cartItems = CartItem::query()->where("userId", $userId, "=")->where("isActive", true, "=")->all();
+        $cartItems = CartItem::query()->where("userId", $userId, "=")->where("isActive", 1, "=")->all();
         $data = [];
         foreach($cartItems as $cartItem){
             $element = [
@@ -37,7 +37,7 @@ class CartController
         $userId = $auth->getUserId();
         
         $productId = $request->requestParam("productId");
-        $item = CartItem::query()->where("userId", $userId)->where("productId", $productId)->where("isActive", true)->first();
+        $item = CartItem::query()->where("userId", $userId)->where("productId", $productId)->where("isActive", 1)->first();
         if ($item) {
             $item->quantity = intval($item->quantity) + 1;
             $item->save();
@@ -51,7 +51,7 @@ class CartController
         $cartItem->productId = $request->requestParam("productId");
         $cartItem->quantity = $request->requestParam("quantity") ?? 1;
         $cartItem->createdAt = date("Y-m-d H:i:s");
-        $cartItem->isActive = true;
+        $cartItem->isActive = 1;
 
         
         try {
@@ -100,7 +100,7 @@ class CartController
             return $response;
         }
         if ($cartItem->quantity == 1) {
-            $cartItem->isActive = false;
+            $cartItem->isActive = 0;
             $cartItem->save();
             $response->setType(HttpResponse::JSON);
             $response->setContent(["message" => "min Quantity reached"]);
@@ -120,7 +120,7 @@ class CartController
         $userId = $auth->getUserId();
         $cartItem = CartItem::where("id", $id)->where("userId", $userId)->first();
 
-        if (!$cartItem) {
+        if (!isset($cartItem)) {
             $response->setType(HttpResponse::JSON);
             $response->setContent(["message" => "Cart item not found"]);
             $response->setStatus(404);
@@ -128,7 +128,7 @@ class CartController
         }
 
         
-        $cartItem->isActive = false;
+        $cartItem->isActive = 0;
         $cartItem->save();
         $response->setType(HttpResponse::JSON);
         $response->setContent($cartItem->toSerializationArray());
@@ -138,7 +138,7 @@ class CartController
     public function countCartItem(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth)
     {
         $userId = $auth->getUserId();
-        $cartItems = CartItem::query()->where("userId", $userId)->where("isActive", true)->all();
+        $cartItems = CartItem::query()->where("userId", $userId)->where("isActive", 1)->all();
         $count = 0;
         foreach($cartItems as $cartItem){
             $count += 1;

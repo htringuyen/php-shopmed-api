@@ -24,8 +24,8 @@ class PaymentController
         $productOrder->userId = $userId;
         $productOrder->note = is_array($note) && array_key_exists('note', $note) ? $note['note'] : '';
         $productOrder->createdAt = date("Y-m-d H:i:s");
-        $productOrder->isPaid = false;
-        $productOrder->isDelivered = false;
+        $productOrder->isPaid = 0;
+        $productOrder->isDelivered = 0;
         $productOrder->status = "Pending";
         $productOrder->save();
 
@@ -42,7 +42,7 @@ class PaymentController
 
         //CartItem::query()->where("userId", $userId)->delete();
         foreach ($cartItems as $cartItem) {
-            $cartItem->isActive = false;
+            $cartItem->isActive = 0;
             $cartItem->save();
         }
         $response->setType(HttpResponse::JSON);
