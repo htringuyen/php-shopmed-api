@@ -34,15 +34,26 @@ class CartController
 
 
     public function addNewCartItem(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth){
-        $cartItem = new CartItem();
         $userId = $auth->getUserId();
+        
+        $productId = $request->requestParam("productId");
+        $item = CartItem::query()->where("userId", $userId)->where("productId", $productId)->where("isActive", true)->first();
+        if ($item) {
+            $item->quantity = intval($item->quantity) + 1;
+            $item->save();
+            $response->setType(HttpResponse::JSON);
+            $response->setContent($item->toSerializationArray());
+            return $response;
+        }
 
+        $cartItem = new CartItem();
         $cartItem->userId = $userId;
         $cartItem->productId = $request->requestParam("productId");
         $cartItem->quantity = $request->requestParam("quantity") ?? 1;
         $cartItem->createdAt = date("Y-m-d H:i:s");
         $cartItem->isActive = true;
 
+        
         try {
             $cartItem->save();
             $response->setType(HttpResponse::JSON);
