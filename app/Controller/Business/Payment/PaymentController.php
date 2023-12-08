@@ -30,7 +30,7 @@ class PaymentController
         $productOrder->save();
 
         //create order items
-        $cartItems = CartItem::query()->where("userId", $userId)->all();
+        $cartItems = CartItem::query()->where("userId", $userId)->where("isActive", 1)->all();
         foreach ($cartItems as $cartItem) {
             $orderItem = new OrderItem();
             $orderItem->productId = $cartItem->productId;

@@ -15,7 +15,7 @@ class ProductOrderController
 
         $query = ProductOrder::query();
 
-        $query->where("userId", "%{$searchValue}%", "like");
+        $query->where("userId", $searchValue, "=");
 
         $productOrders = $query->all();
 

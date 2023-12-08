@@ -5,6 +5,7 @@ namespace Slimmvc\Http;
 use DateTimeImmutable;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Firebase\JWT\SignatureInvalidException;
 
 class TokenAuthentication {
     const ACCESS_TOKEN = "ACCESS_TOKEN";
@@ -78,7 +79,14 @@ class TokenAuthentication {
         $domainName = $_ENV['DOMAIN_NAME'];
         $secretKey = $_ENV['AUTH_SECRET_KEY'];
 
-        $decryptedData = JWT::decode($token, new Key($secretKey, self::ENCRYPTION_ALGORITHMS));
+        //$decryptedData = JWT::decode($token, new Key($secretKey, self::ENCRYPTION_ALGORITHMS));
+        $decryptedData = null;
+        try {
+            $decryptedData = JWT::decode($token, new Key($secretKey, self::ENCRYPTION_ALGORITHMS));
+        }
+        catch (SignatureInvalidException $e) {
+            return false;
+        }
 
         $now = new DateTimeImmutable();
 

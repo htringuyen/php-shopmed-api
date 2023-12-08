@@ -13,10 +13,11 @@ class OrderItemController
 {
     public function getAll(HttpRequest $request, HttpResponse $response, TokenAuthentication $auth) {
         $searchValue = $request->requestParam("oderId");
+        $userId = $auth->getUserId();
 
         $query = OrderItem::query();
 
-        $query->where("orderId", "%{$searchValue}%", "like");
+        $query->where("orderId", $searchValue, "=");
 
         $orderItems = $query->all();
 
